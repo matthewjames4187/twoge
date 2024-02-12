@@ -26,11 +26,11 @@ spec:
             periodSeconds: 5
         resources:
           requests:
-            cpu: "50m"
             memory: "50Mi"
+            cpu: "50m"
           limits:
-            cpu: "100m"
             memory: "100Mi"
+            cpu: "100m"
         env:
           - name: PG_USER
             valueFrom:

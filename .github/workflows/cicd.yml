@@ -8,7 +8,7 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   AWS_REGION: 'us-east-1'
   K8S_NAMESPACE: 'eks-cicd'
-  EKS_CLUSTER_NAME: 'cptest-eks'
+  EKS_CLUSTER_NAME: 'cpclass-eks-cluster'
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
@@ -50,9 +50,9 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
       - name: deploy to eks
         run: |
-          kubectl apply -f db_dep/ -n matt
+          kubectl apply -f k8s-postgres-dep.yml/ -n matt
       - name: Delay for 15
         run: sleep 15
       - name: Deploy EKS
         run: |
-          kubectl apply -f k8s-app-dep/ -n matt
+          kubectl apply -f k8s-app-dep.yml/ -n matt

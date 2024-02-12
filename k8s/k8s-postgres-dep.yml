@@ -33,16 +33,16 @@ spec:
                 - -U 
                 - admin
           # aligns with pv and pvc.yml through volumes: (see below)      
-          volumeMounts:
-            - mountPath: /var/lib/postgresql_custom/data/
-              name: postgres-volume
+          #volumeMounts:
+          #  - mountPath: /var/lib/postgresql_custom/data/
+          #    name: postgres-volume
           resources:
-          requests:
-            cpu: "100m"
-            memory: "100Mi"
-          limits:
-            cpu: "200m"
-            memory: "200Mi"
+            requests:
+              memory: "100Mi"
+              cpu: "100m"
+            limits:
+              memory: "200Mi"
+              cpu: "200m"
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -59,12 +59,12 @@ spec:
                 configMapKeyRef:
                   name: twoge-configmap
                   key: PG_DATABASE
-            - name: PGDATA
-              value: /var/lib/postgresql_custom/data/pgdata
+            #- name: PGDATA
+            #  value: /var/lib/postgresql_custom/data/pgdata
           
       # aligns with pv and pvc.yml
-      volumes:
-        - name: postgres-volume
-          persistentVolumeClaim:
-            claimName: postgres-pvc
+      #volumes:
+      #  - name: postgres-volume
+      #    persistentVolumeClaim:
+      #      claimName: postgres-pvc
 

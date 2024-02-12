@@ -50,9 +50,9 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
       - name: deploy to eks
         run: |
-          kubectl apply -f k8s/k8s-postgres-dep.yml/ -n matt
+          kubectl apply -f k8s/k8s-postgres-dep.yml -n matt
       - name: Delay for 15
         run: sleep 15
       - name: Deploy EKS
         run: |
-          kubectl apply -f k8s/k8s-app-dep.yml/ -n matt
+          kubectl apply -f k8s/k8s-app-dep.yml -n matt

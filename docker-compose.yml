@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+    database:
+        image: postgres:latest
+        container_name: twoge-database-server
+        environment:
+            POSTGRES_DB: ${PG_DATABASE}
+            POSTGRES_USER: ${PG_USER}
+            POSTGRES_PASSWORD: ${PG_PASSWORD}
+        ports:
+          - "${PG_PORT}:5432"
+        networks:
+            - twoge_app_network
+        volumes:
+          - pgdata:/var/lib/postgresql/data
+        healthcheck:
+          test: ["CMD", "pg_isready", "-U", "admin", "-d", "twoge_db"]
+          interval: 10s
+          timeout: 5s
+          retries: 3
+        env_file: .env
+
+    app:
+        build: .
+        restart: always
+        container_name: twoge-app
+        ports:
+          - "${BACKEND_PORT}:8080"
+        networks:
+            - twoge_app_network
+        environment:
+            DATABASE_URL: postgres://${PG_USER}:${PG_PASSWORD}@${PG_HOST}:${PG_PORT}:${PG_DATABASE}
+            PORT: ${BACKEND_PORT}
+        env_file: .env
+        depends_on:
+          database:
+            condition: service_healthy
+
+networks:
+    twoge_app_network:
+        driver: bridge
+
+volumes:
+  pgdata:

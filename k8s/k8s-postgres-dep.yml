@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twoge-database
+  namespace: matt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: twoge-database
+  template:
+    metadata:
+      labels:
+        app: twoge-database
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          startupProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            exec:
+              command:
+                - pg_isready
+                - -q 
+                - -d 
+                - 'twoge_db'
+                - -U 
+                - admin
+          # aligns with pv and pvc.yml through volumes: (see below)      
+          volumeMounts:
+            - mountPath: /var/lib/postgresql_custom/data/
+              name: postgres-volume
+          resources:
+          requests:
+            cpu: "100m"
+            memory: "100Mi"
+          limits:
+            cpu: "200m"
+            memory: "200Mi"
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: twoge-configmap
+                  key: PG_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: PG_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: twoge-configmap
+                  key: PG_DATABASE
+            - name: PGDATA
+              value: /var/lib/postgresql_custom/data/pgdata
+          
+      # aligns with pv and pvc.yml
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+

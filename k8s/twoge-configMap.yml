@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: twoge-configmap
+  namespace: matt
+data:
+  PG_USER: admin
+  PG_HOST: twoge-database
+  PG_PORT: "5432"
+  PG_DATABASE: twoge_db
